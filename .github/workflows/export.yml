@@ -19,9 +19,10 @@ jobs:
 
       - run: pip install requests
 
-      - name: Genera CSV
+     - name: Genera CSV
         env:
-          SHOPIFY_TOKEN: ${{ secrets.SHOPIFY_TOKEN }}
+          SHOPIFY_CLIENT_ID: ${{ secrets.SHOPIFY_CLIENT_ID }}
+          SHOPIFY_CLIENT_SECRET: ${{ secrets.SHOPIFY_CLIENT_SECRET }}
         run: python export.py
 
       - name: Commit e push CSV
