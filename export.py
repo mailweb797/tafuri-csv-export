@@ -38,7 +38,7 @@ def save_csv(products):
         w.writerow(["ID", "Titolo", "Marca", "Tipo", "SKU", "Prezzo", "Disponibilita", "Immagine", "URL Prodotto"])
         for p in products:
             for v in p.get("variants", []):
-                img = p.get("images", [{}])[0].get("src", "")
+                img = p.get("images", [{}])[0].get("src", "") if p.get("images") else ""
                 handle = p.get("handle", "")
                 w.writerow([
                     p["id"], p["title"], p["vendor"], p["product_type"],
