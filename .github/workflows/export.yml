@@ -1,0 +1,33 @@
+name: Export CSV Prodotti
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: pip install requests
+
+      - name: Genera CSV
+        env:
+          SHOPIFY_TOKEN: ${{ secrets.SHOPIFY_TOKEN }}
+        run: python export.py
+
+      - name: Commit e push CSV
+        run: |
+          git config user.name "csv-bot"
+          git config user.email "bot@noreply.com"
+          git add docs/products.csv
+          git diff --staged --quiet || git commit -m "CSV aggiornato $(date -u)"
+          git push
