@@ -28,7 +28,7 @@ def fetch_all_products(token):
         r.raise_for_status()
         products.extend(r.json()["products"])
         link = r.headers.get("Link", "")
-        url = next((p.split(">")[0].lstrip("<") for p in link.split(",") if 'rel="next"' in p), None)
+        url = next((p.strip().split(";")[0].strip().strip("<>") for p in link.split(",") if 'rel="next"' in p), None)
     return products
 
 def save_csv(products):
