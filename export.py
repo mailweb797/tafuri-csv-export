@@ -3,14 +3,28 @@ import csv
 import os
 from datetime import datetime
 
-SHOP = "calzaturetafuri.myshopify.com"
-TOKEN = os.environ["SHOPIFY_TOKEN"]
+SHOP = "calzaturetafuri"
+CLIENT_ID = os.environ["SHOPIFY_CLIENT_ID"]
+CLIENT_SECRET = os.environ["SHOPIFY_CLIENT_SECRET"]
 
-def fetch_all_products():
+def get_token():
+    response = requests.post(
+        f"https://{SHOP}.myshopify.com/admin/oauth/access_token",
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        data={
+            "grant_type": "client_credentials",
+            "client_id": CLIENT_ID,
+            "client_secret": CLIENT_SECRET,
+        }
+    )
+    response.raise_for_status()
+    return response.json()["access_token"]
+
+def fetch_all_products(token):
     products = []
-    url = f"https://{SHOP}/admin/api/2024-01/products.json?limit=250&status=active"
+    url = f"https://{SHOP}.myshopify.com/admin/api/2025-01/products.json?limit=250&status=active"
     while url:
-        r = requests.get(url, headers={"X-Shopify-Access-Token": TOKEN})
+        r = requests.get(url, headers={"X-Shopify-Access-Token": token})
         r.raise_for_status()
         products.extend(r.json()["products"])
         link = r.headers.get("Link", "")
@@ -32,6 +46,7 @@ def save_csv(products):
                     img, f"https://calzaturetafuri.com/products/{handle}"
                 ])
 
-products = fetch_all_products()
+token = get_token()
+products = fetch_all_products(token)
 save_csv(products)
 print(f"Aggiornato: {datetime.now()} — {len(products)} prodotti")
