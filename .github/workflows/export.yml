@@ -19,7 +19,7 @@ jobs:
 
       - run: pip install requests
 
-     - name: Genera CSV
+      - name: Genera CSV
         env:
           SHOPIFY_CLIENT_ID: ${{ secrets.SHOPIFY_CLIENT_ID }}
           SHOPIFY_CLIENT_SECRET: ${{ secrets.SHOPIFY_CLIENT_SECRET }}
